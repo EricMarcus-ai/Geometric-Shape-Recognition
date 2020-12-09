@@ -3,5 +3,8 @@
 /workspace.xml
 venv/
 .idea/
+dat.csv
+data.csv
+box_data.csv
 __pycache__
 QuestionFile
