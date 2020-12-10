@@ -13,7 +13,7 @@ class ShapeCreator:
 
     def box_creator(self, flatten=True):
         # this method creates one box object
-        # TODO: implement the x,y,w,h earlier on, now I define them at the end
+        # TODO: implement the x,y,w,h earlier on, now I define them at the end. Shorten this method.
         box_array = np.zeros((self.back_size, self.back_size))  # creating background
 
         rand1 = sorted([random.randint(0, self.back_size) for i in range(2)])  # first random pair
@@ -48,11 +48,14 @@ class ShapeCreator:
             return [box_array, np.array([[x_coord, y_coord, width, height]])]
 
     def box_dataset_creator(self, num_imgs, filename, saved=False):
+        # TODO: saved is broken for now, since I am adapting the output to NN input and haven't updated the save
         # This method always returns a non-flattened box_list and (if passed) saves a flattened version in csv
-        box_list = []
+        box_list = np.empty((num_imgs, background_size * background_size))
+        label_list = np.empty((num_imgs, label_size))
         for i in range(num_imgs):
-            local_box = self.box_creator()
-            box_list.append(local_box)  # hstack flattens the list, when loading we have to repack
+            local_box, local_label = self.box_creator()
+            box_list[i] = local_box
+            label_list[i] = local_label
 
         if saved:  # if saved, we save the box_list flattened in csv format
             save_list = []
@@ -60,10 +63,11 @@ class ShapeCreator:
                 save_list.append(np.hstack(box_list[i]))
             np.savetxt(filename, save_list, delimiter=',')
 
-        return box_list
+        return box_list, label_list
 
     def box_dataset_loader(self, file_path):
-        #  This method loads a dataset saved in csv format
+        # TODO: loader is broken for now, first fix saver, then loader.
+        # This method loads a dataset saved in csv format
         read_list = np.genfromtxt(file_path, delimiter=',')
         box_list = []
 
