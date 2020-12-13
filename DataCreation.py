@@ -12,40 +12,22 @@ class ShapeCreator:
         self.label_size = label_size  # how many entries are there in one label
 
     def box_creator(self, flatten=True):
-        # this method creates one box object
-        # TODO: implement the x,y,w,h earlier on, now I define them at the end. Shorten this method.
+        # this method creates one box object with top left location at x,y
+        # the w (weight) increases to the right and h (height) downwards
         box_array = np.zeros((self.back_size, self.back_size))  # creating background
 
-        rand1 = sorted([random.randint(0, self.back_size) for i in range(2)])  # first random pair
+        x = random.randint(0, self.back_size-2)  # no x coords on the boundary - that would yield empty boxes
+        y = random.randint(0, self.back_size-2)
+        w = random.randint(1, (self.back_size-1)-x)  # width at least 1
+        h = random.randint(1, (self.back_size-1)-y)
 
-        if rand1[0] == rand1[1]:   # check if the random numbers are the same, which is important for the next numbers
-            allowed_numbers = np.setdiff1d(np.arange(0, self.back_size), rand1[0]).tolist()
-            rand2 = random.choices(allowed_numbers, k=2)
+        box_array[y:y+h, x:x+w] = 1
 
-        else:
-            allowed_numbers = np.arange(0, self.back_size).tolist()
-            rand2 = sorted(random.sample(allowed_numbers, 2))
-
-        sampled_points = rand1 + rand2  # collection of all random sampled allowed pairs (no 3 points equal)
-
-        #  below we make sure that the first-second or third-fourth pairs are unequal, because they will describe
-        #  the bounding boxes. Equal numbers would result in a box with a zero width or height.
-        while sampled_points[0] == sampled_points[1] or sampled_points[2] == sampled_points[3]:
-            sampled_points = random.sample(sampled_points, 4)
-
-        bound_list1 = sorted(sampled_points[0:2])  # these bounding lists now consist out of two different points
-        bound_list2 = sorted(sampled_points[2:4])
-
-        box_array[bound_list1[0]:bound_list1[1], bound_list2[0]:bound_list2[1]] = 1
-        x_coord = bound_list1[0]
-        y_coord = bound_list2[0]
-        height = bound_list1[1] - x_coord
-        width = bound_list2[1] - y_coord
-
+        # note that we normalize the x,y,w,h by the background size in the return below
         if flatten:
-            return box_array.flatten(), np.array([x_coord, y_coord, width, height])
+            return box_array.flatten(), np.array([x, y, w, h]) / self.back_size
         else:
-            return [box_array, np.array([[x_coord, y_coord, width, height]])]
+            return [box_array, np.array([[x, y, w, h]]) / self.back_size]
 
     def box_dataset_creator(self, num_imgs, filename, saved=False):
         # TODO: saved is broken for now, since I am adapting the output to NN input and haven't updated the save
@@ -62,6 +44,10 @@ class ShapeCreator:
             for i in range(len(box_list)):
                 save_list.append(np.hstack(box_list[i]))
             np.savetxt(filename, save_list, delimiter=',')
+
+        # below I normalize to mean 0 and std 1, although this doesn't matter much for the eventual training
+        # probably because feature normalization is mostly necessary when features have widely varying sizes
+        box_list = (box_list - np.mean(box_list)) / np.std(box_list)
 
         return box_list, label_list
 

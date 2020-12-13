@@ -10,4 +10,4 @@ class FFM(NeuralNetwork):
         self.model.add(keras.layers.Dropout(0.2))
         self.model.add(keras.layers.Dense(4))
         print(self.model.summary())
-        self.model.compile(optimizer='adadelta', loss='mse')
+        self.model.compile(optimizer='adam', loss='mse')

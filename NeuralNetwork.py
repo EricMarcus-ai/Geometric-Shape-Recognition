@@ -22,7 +22,7 @@ class NeuralNetwork:
             self.model.load_model(model_name)
 
         else:
-            self.model.fit(train_x, train_y, batch_size=batch_size, epochs=epochs)
+            self.model.fit(train_x, train_y, batch_size=batch_size, epochs=epochs, verbose=2)
 
     def test_model(self, test_x, test_y):
         test_loss = self.model.evaluate(test_x, test_y, verbose=2)
