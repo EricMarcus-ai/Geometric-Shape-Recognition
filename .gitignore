@@ -5,6 +5,6 @@ venv/
 .idea/
 dat.csv
 data.csv
-box_data.csv
+box_*
 __pycache__
 QuestionFile

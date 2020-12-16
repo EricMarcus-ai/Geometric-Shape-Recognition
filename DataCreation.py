@@ -29,8 +29,7 @@ class ShapeCreator:
         else:
             return [box_array, np.array([[x, y, w, h]]) / self.back_size]
 
-    def box_dataset_creator(self, num_imgs, filename, saved=False):
-        # TODO: saved is broken for now, since I am adapting the output to NN input and haven't updated the save
+    def box_dataset_creator(self, num_imgs, filename=''):
         # This method always returns a non-flattened box_list and (if passed) saves a flattened version in csv
         box_list = np.empty((num_imgs, background_size * background_size))
         label_list = np.empty((num_imgs, label_size))
@@ -39,27 +38,20 @@ class ShapeCreator:
             box_list[i] = local_box
             label_list[i] = local_label
 
-        if saved:  # if saved, we save the box_list flattened in csv format
-            save_list = []
-            for i in range(len(box_list)):
-                save_list.append(np.hstack(box_list[i]))
-            np.savetxt(filename, save_list, delimiter=',')
-
         # below I normalize to mean 0 and std 1, although this doesn't matter much for the eventual training
         # probably because feature normalization is mostly necessary when features have widely varying sizes
         box_list = (box_list - np.mean(box_list)) / np.std(box_list)
 
+        if filename:  # if saved, we save the box_list flattened in csv format
+            np.savetxt(filename + '.csv', box_list, delimiter=',')
+            np.savetxt(filename + '_labels' + '.csv', label_list, delimiter=',')
+
         return box_list, label_list
 
-    def box_dataset_loader(self, file_path):
-        # TODO: loader is broken for now, first fix saver, then loader.
+    @staticmethod
+    def box_dataset_loader(file_path):
         # This method loads a dataset saved in csv format
-        read_list = np.genfromtxt(file_path, delimiter=',')
-        box_list = []
+        box_list = np.genfromtxt(file_path + '.csv', delimiter=',')
+        label_list = np.genfromtxt(file_path + '_labels' + '.csv', delimiter=',')
 
-        for i in range(len(read_list)):  # here we unflatten the dataset for appropriate formats for the NN
-            local_box = read_list[i]
-            split_location = -self.label_size  # want to split the labels and input, the labels are saved at the end
-            box_list.append(Utils.array_split(local_box, split_location))
-
-        return box_list
+        return box_list, label_list
