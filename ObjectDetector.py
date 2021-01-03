@@ -6,7 +6,8 @@ from FeedForwardModel import FFM
 def main():
     """This is where the magic happens"""
     #  TODO: think about the normalization and mean averaging for training versus test data
-    #   Currently I do them all individually but this is probably not right.
+    #   Currently I do them all individually but this is  not right.
+    #   Should I init in the datacreation with the self.blabla, when the things are already imported from defines
 
     shape_creator = DataCreation.ShapeCreator()
 
@@ -19,7 +20,7 @@ def main():
 
     n = FFM()
     n.initialize_model()
-    n.train_model(train_x, train_y, val_x, val_y, batch_size=1000, epochs=10)
+    n.train_model(train_x, train_y, val_x, val_y, batch_size=1000, epochs=100)
     n.test_model(test_x, test_y)
 
     preds = n.prediction(test_x[0:10])

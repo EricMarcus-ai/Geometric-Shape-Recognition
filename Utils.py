@@ -1,4 +1,4 @@
-from Defines import background_size
+from Defines import background_size, num_boxes, label_size
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
@@ -27,11 +27,20 @@ def draw_predictions(input_boxes, input_labels, predicted_labels):
     if input_boxes.shape == (inp_len, background_size * background_size):  # reshape into plottable shape
         input_boxes = input_boxes.reshape(inp_len, background_size, background_size)
 
-    for i in range(len(input_boxes)):
+    for i in range(len(input_boxes)):  # loop over all the different examples
         plt.clf()  # clear previous plot
-        binary_array_plot(input_boxes[i])  # plot box
-        draw_rectangle(input_labels[i])  # plot true box
-        draw_rectangle(predicted_labels[i], colour='b')  # plot predicted box
+        binary_array_plot(input_boxes[i])  # plot background + box(es)
+
+        for j in range(num_boxes):  # loop over the different boxes in each example
+            index_start = j * label_size  # these two indices pick out the individual box coordinates
+            index_end = j * label_size + label_size
+
+            true_rect = input_labels[i][index_start:index_end]  # these two rectangles are the true and predicted labels
+            pred_rect = predicted_labels[i][index_start:index_end]
+
+            draw_rectangle(true_rect)  # plot true rectangle
+            draw_rectangle(pred_rect, colour='b')  # plot predicted rectangle
+
         plt.show()
         inp = input("Press enter for continue or q for quit")
         if inp == 'q':

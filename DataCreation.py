@@ -1,5 +1,5 @@
 import numpy as np
-from Defines import background_size, label_size
+from Defines import background_size, label_size, num_boxes
 import random
 import Utils
 
@@ -10,29 +10,33 @@ class ShapeCreator:
     def __init__(self):
         self.back_size = background_size  # how large the background will be, on which the shapes are created
         self.label_size = label_size  # how many entries are there in one label
+        self.num_boxes = num_boxes  # how many boxes will be drawn
 
     def box_creator(self, flatten=True):
         # this method creates one box object with top left location at x,y
         # the w (weight) increases to the right and h (height) downwards
         box_array = np.zeros((self.back_size, self.back_size))  # creating background
+        label_array = np.zeros(self.num_boxes * self.label_size)
 
-        x = random.randint(0, self.back_size-2)  # no x coords on the boundary - that would yield empty boxes
-        y = random.randint(0, self.back_size-2)
-        w = random.randint(1, (self.back_size-1)-x)  # width at least 1
-        h = random.randint(1, (self.back_size-1)-y)
+        for i in range(self.num_boxes):
+            x = random.randint(0, self.back_size-2)  # no x coords on the boundary - that would yield empty boxes
+            y = random.randint(0, self.back_size-2)
+            w = random.randint(1, (self.back_size-1)-x)  # width at least 1
+            h = random.randint(1, (self.back_size-1)-y)
 
-        box_array[y:y+h, x:x+w] = 1
+            box_array[y:y+h, x:x+w] = 1
+            label_array[label_size * i:label_size * i+label_size] = [x, y, w, h]
 
         # note that we normalize the x,y,w,h by the background size in the return below
         if flatten:
-            return box_array.flatten(), np.array([x, y, w, h]) / self.back_size
+            return box_array.flatten(), label_array / self.back_size
         else:
-            return [box_array, np.array([[x, y, w, h]]) / self.back_size]
+            return [box_array, [label_array] / self.back_size]
 
     def box_dataset_creator(self, num_imgs, filename=''):
         # This method always returns a non-flattened box_list and (if passed) saves a flattened version in csv
-        box_list = np.empty((num_imgs, background_size * background_size))
-        label_list = np.empty((num_imgs, label_size))
+        box_list = np.empty((num_imgs, self.back_size * self.back_size))
+        label_list = np.empty((num_imgs, self.label_size * self.num_boxes))
         for i in range(num_imgs):
             local_box, local_label = self.box_creator()
             box_list[i] = local_box
