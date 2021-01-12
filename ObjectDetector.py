@@ -20,7 +20,7 @@ def main():
 
     n = FFM()
     n.initialize_model()
-    n.train_model(train_x, train_y, val_x, val_y, batch_size=1000, epochs=100)
+    n.train_model(train_x, train_y, val_x, val_y, batch_size=1024, epochs=100)
     n.test_model(test_x, test_y)
 
     preds = n.prediction(test_x[0:10])
