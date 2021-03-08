@@ -14,7 +14,7 @@ class ShapeCreator:
 
     def box_creator(self, flatten=True):
         # this method creates one box object with top left location at x,y
-        # the w (weight) increases to the right and h (height) downwards
+        # the w (width) increases to the right and h (height) downwards
         box_array = np.zeros((self.back_size, self.back_size))  # creating background
         label_array = np.zeros(self.num_boxes * self.label_size)
 
@@ -31,7 +31,7 @@ class ShapeCreator:
         if flatten:
             return box_array.flatten(), label_array / self.back_size
         else:
-            return [box_array, [label_array] / self.back_size]
+            return [box_array, [label_array / self.back_size]]
 
     def box_dataset_creator(self, num_imgs, filename=''):
         # This method always returns a non-flattened box_list and (if passed) saves a flattened version in csv

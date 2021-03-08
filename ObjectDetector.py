@@ -5,10 +5,13 @@ from FeedForwardModel import FFM
 
 def main():
     """This is where the magic happens"""
-    #  TODO: think about the normalization and mean averaging for training versus test data
-    #   Currently I do them all individually but this is  not right.
+    #  TODO: Create openCV / skimage features to extract seperately the boxes in an image and feed after one another
+    #   Make background larger to diminish overlapping chance
+    #   This project was built as a precursor to plaque detector for alzheimer
+    #   Include another type of object, e.g. circle
     #   Should I init in the datacreation with the self.blabla, when the things are already imported from defines
 
+    # TODO: Train first solo object classifier, then apply the network to multi objects after
     shape_creator = DataCreation.ShapeCreator()
 
     train_x, train_y = shape_creator.box_dataset_creator(60000)
