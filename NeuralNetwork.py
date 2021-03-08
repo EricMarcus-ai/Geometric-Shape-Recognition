@@ -1,14 +1,14 @@
 import tensorflow as tf
 import os
-from Defines import background_size
 
 
 class NeuralNetwork:
     """ General neural network class"""
 
-    def __init__(self):
+    def __init__(self, background_size=8, label_size=4, num_objects=1):
         self.model = tf.keras.Sequential()
         self.input_size = background_size * background_size
+        self.output_size = label_size * num_objects
 
     def save_model(self, model_name):
         self.model.save(model_name)
@@ -30,7 +30,7 @@ class NeuralNetwork:
         return test_loss
 
     def prediction(self, input_array):
-        if input_array.shape == (64,):
+        if input_array.shape == (self.input_size,):
             input_array = input_array.reshape(1, -1)
         predictions = self.model.predict(input_array)
         return predictions

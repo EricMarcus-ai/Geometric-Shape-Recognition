@@ -1,9 +1,6 @@
-from Defines import background_size, num_boxes, label_size
+from Defines import background_size, num_objects
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-
-
-"""The Utils file contains various utility functions"""
 
 
 # This function creates a plot of a np.array
@@ -22,16 +19,17 @@ def draw_rectangle(coords, colour='r'):
 
 # This function plots the prediction and true labels through inputted data
 def draw_predictions(input_boxes, input_labels, predicted_labels):
-
+    label_size = input_labels.shape[-1]  # lenght of a single label, used in loops below
     inp_len = len(input_boxes)
-    if input_boxes.shape == (inp_len, background_size * background_size):  # reshape into plottable shape
+
+    if input_boxes.shape == (inp_len, background_size * background_size):  # unflatten
         input_boxes = input_boxes.reshape(inp_len, background_size, background_size)
 
-    for i in range(len(input_boxes)):  # loop over all the different examples
+    for i in range(len(input_boxes)):
         plt.clf()  # clear previous plot
-        binary_array_plot(input_boxes[i])  # plot background + box(es)
+        binary_array_plot(input_boxes[i])
 
-        for j in range(num_boxes):  # loop over the different boxes in each example
+        for j in range(num_objects):
             index_start = j * label_size  # these two indices pick out the individual box coordinates
             index_end = j * label_size + label_size
 
@@ -42,11 +40,9 @@ def draw_predictions(input_boxes, input_labels, predicted_labels):
             draw_rectangle(pred_rect, colour='b')  # plot predicted rectangle
 
         plt.show()
-        inp = input("Press enter for continue or q for quit")
-        if inp == 'q':
-            return
-
-    return
+        # inp = input("Press enter for continue or q for quit")
+        # if inp == 'q':
+        #     break
 
 
 # This function splits the array at split_loc
