@@ -11,26 +11,25 @@ class ShapeCreator:
         self.bbox_size = bbox_size
         self.num_objects = num_objects
 
-    def make_object(self, image, num_objects, object_type):
+    def make_object(self, image, object_type):
         """
         Places num_objects objects on image, if object_type is not inputted they are chosen randomly
         :param image: the image upon which objects are placed
-        :param num_objects: how many objects will be built
         :param object_type: can be 0 for box,1 for cirlce,2 for triangle or None, if None => will be chosen randomly in (0,num_possible_shapes-1)
         :return: returns the inputted image with objects placed upon it
         """
         label = []
-        for i in range(num_objects):
-            object_type = self.object_type_chooser(object_type)
-            label.append(self.one_hot_encoder(object_type))
+        for i in range(self.num_objects):
+            object_type_local = self.object_type_chooser(object_type)
+            label.append(self.one_hot_encoder(object_type_local))
 
-            if object_type == 0:
+            if object_type_local == 0:
                 image, bbox = self.box_creator(image)
                 label.append(bbox)
-            if object_type == 1:
+            if object_type_local == 1:
                 image, bbox = self.circle_creator(image)
                 label.append(bbox)
-            if object_type == 2:
+            if object_type_local == 2:
                 image, bbox = self.triangle_creator(image)
                 label.append(bbox)
 
@@ -50,7 +49,7 @@ class ShapeCreator:
         label_list = np.empty((num_imgs, (num_possible_shapes + self.bbox_size) * self.num_objects))
 
         for i in range(num_imgs):
-            image_list[i], label_list[i] = self.make_object(image_list[i], self.num_objects, object_type)
+            image_list[i], label_list[i] = self.make_object(image_list[i], object_type)
 
         if filename:
             np.savetxt(filename + '.csv', image_list, delimiter=',')
@@ -59,7 +58,7 @@ class ShapeCreator:
         if flatten:
             return image_list.reshape(-1, self.back_size ** 2), label_list
         else:
-            return image_list, label_list
+            return image_list.reshape((-1, self.back_size, self.back_size, 1)), label_list
 
     def box_creator(self, image):
         """ creates one box object upon image with top left location at x,y

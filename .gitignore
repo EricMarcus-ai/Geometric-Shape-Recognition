@@ -4,6 +4,7 @@
 venv/
 .idea/
 backup
+CNN_Model*
 dat.csv
 data.csv
 box_*

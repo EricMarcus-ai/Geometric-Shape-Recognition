@@ -22,7 +22,7 @@ class NeuralNetwork:
     def train_model(self, train_x, train_y, val_x, val_y, batch_size=512, epochs=100, model_name=''):
 
         if os.path.exists(model_name) and model_name:
-            self.model.load_model(model_name)
+            self.model = tf.keras.models.load_model(model_name)
 
         else:
             self.model.fit(train_x, train_y, batch_size=batch_size, epochs=epochs, validation_data=(val_x, val_y),
@@ -38,15 +38,16 @@ class NeuralNetwork:
         predictions = self.model.predict(input_array)
         return predictions
 
-    def multi_object_prediction(self, input_data):
+    def multi_object_prediction(self, input_data, flatten=True):
         """
         Implements multi object recognition by first segmenting the image to single objects using non-ML computer vision techniques
         :param input_data: a collection of images containging multiple objects
+        :param flatten: specifies the format of the data, True for FeedForward, False for Convolutional
         :return: list of prediction(s) of boxes for all inputted images
         """
         prediction_list = []
         for input_image in input_data:
-            seg_images = SegmentationCV.segment(input_image)
+            seg_images = SegmentationCV.segment(input_image, flatten=flatten)
 
             prediction_seg = []
             for i in range(len(seg_images)):
