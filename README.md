@@ -38,7 +38,5 @@ Utils.intersection_over_union(true_labels, predicted_labels)
 The draw_predictions draws the image with objects along with the predicted label + bounding box, and, if inputted, the true label + bounding box.
 The intersection over union works both on single inputs and lists of bounding boxes, in the case of a list it returns the mean IoU.
 # Acknowledgements
-The setup (and only the setup) of this problem is similar to
+The setup (and only the setup) of the problem is similar to
 * [Object detection with neural networks](https://towardsdatascience.com/object-detection-with-neural-networks-a4e2c46b4491) 
-
-This code, along with the method of solving the problem, was created by myself.
