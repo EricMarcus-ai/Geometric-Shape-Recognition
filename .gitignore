@@ -3,6 +3,7 @@
 /workspace.xml
 venv/
 .idea/
+backup
 dat.csv
 data.csv
 box_*
