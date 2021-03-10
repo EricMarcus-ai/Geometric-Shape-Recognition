@@ -1,4 +1,4 @@
-# ObjectDetector
+# Geometric Shape Recognition
 This detector will find elementary shapes (currently implemented box, circle and triangle) on a background, by predicting the class and a bounding box.
 The goal of the project was to combine classical computer vision techniques with neural networks to detect multiple
 objects in a scene. A convolutional model trained on 100k images on ~70 epochs averages a 0.69 Intersection Over Union. 
